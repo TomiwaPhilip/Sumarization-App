@@ -1,5 +1,3 @@
-import time
-
 import streamlit as st
 from gradio_client import Client
 
@@ -28,16 +26,20 @@ if prompt := st.chat_input("Enter text to be summarized"):
 
     # Display summarizer response in chat container
     with st.chat_message('assistant'):
-        message_placeholder = st.empty()
+        message_placeholder = st.markdown("Summarizing... |")
         full_response = " "
         # Get summary from Summarizer
-        client = Client("https://theosphil-facebook-bart-large-cnn.hf.space/")
-        result = client.predict(
-                        prompt,	 # str in 'Input' Textbox component
-                        api_name="/predict"
-        )
-        full_response += result
-        message_placeholder.markdown(full_response)
+        try:
+            client = Client("https://theosphil-facebook-bart-large-cnn.hf.space/")
+            result = client.predict(
+                            prompt,	 # str in 'Input' Textbox component
+                            api_name="/predict"
+            )
+            full_response += result
+            message_placeholder.markdown(full_response)
+        except:
+            full_response = "Error while generating summary. Try checking your connection or reload browser."
+            message_placeholder.markdown(full_response)
 
     # Add summarizer reply to chat history
     st.session_state.messages.append({'role': 'assistant', 'content': full_response})
